@@ -3,6 +3,12 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super(PublishedManager, self).get_queryset()\
+                                            .filter(status='publicado')
+
+
 class Post(models.Model):
     STATUS = (
         ('rascunho', 'Rascunho'),
@@ -20,11 +26,13 @@ class Post(models.Model):
                               choices=STATUS,
                               default='rascunho')
 
-    class Meta:
-        ordering = ('publicado',)
-
-    def __str__(self):
-        return self.titulo
+    objects = models.Manager()
+    published = PublishedManager()
 
 
-# Create your models here.
+class Meta:
+    ordering = ('publicado',)
+
+
+def __str__(self):
+    return self.titulo
